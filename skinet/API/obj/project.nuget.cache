@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "sgh90jSjRTg=",
+  "success": true,
+  "projectFilePath": "/Users/ushanthaarachchi/Documents/GitHub/E-Commerce-/skinet/API/API.csproj",
+  "expectedPackageFiles": [
+    "/Users/ushanthaarachchi/.nuget/packages/microsoft.aspnetcore.openapi/10.0.2/microsoft.aspnetcore.openapi.10.0.2.nupkg.sha512",
+    "/Users/ushanthaarachchi/.nuget/packages/microsoft.openapi/2.0.0/microsoft.openapi.2.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
