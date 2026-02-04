@@ -32,7 +32,7 @@ public class ProductsController(IProductRepository repo) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Product>> CreateProduct(Product product)
     {
-        repo.addProduct(product);
+        repo.AddProduct(product);
 
         if (await repo.SaveChangesAsync())
         {
@@ -49,7 +49,7 @@ public class ProductsController(IProductRepository repo) : ControllerBase
         if (product.Id != id || !ProductExists(id))
            return BadRequest("Can't update product");
 
-        repo.updateProduct(product);
+        repo.UpdateProduct(product);
 
         if (await repo.SaveChangesAsync())
         {
@@ -66,7 +66,7 @@ public class ProductsController(IProductRepository repo) : ControllerBase
 
         if (product == null) return NotFound();
 
-        repo.deleteProduct(product);
+        repo.DeleteProduct(product);
 
        if (await repo.SaveChangesAsync())
         {
@@ -74,6 +74,18 @@ public class ProductsController(IProductRepository repo) : ControllerBase
         }
 
         return BadRequest("Failed to delete product");
+    }
+
+    [HttpGet("brands")]
+    public async Task<ActionResult<IReadOnlyList<string>>> GetBrands()
+    {
+        return Ok(await repo.GetBrandsAsync());
+    }
+
+    [HttpGet("types")]
+    public async Task<ActionResult<IReadOnlyList<string>>> GetTypes()
+    {
+        return Ok(await repo.GetTypesAsync());
     }
 
 
