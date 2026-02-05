@@ -38,9 +38,21 @@ public class ProductRepository(StoreContext context) : IProductRepository
         return await context.Products.FindAsync(id);
     }
 
-    public async Task<IReadOnlyList<Product>> GetProductsAsync()
+    public async Task<IReadOnlyList<Product>> GetProductsAsync(string? brand, string? type)
     {
-        return await context.Products.ToListAsync();
+        var query = context.Products.AsQueryable();
+
+        if (!string.IsNullOrEmpty(brand))
+        {
+            query = query.Where(x => x.Brand == brand);
+        }
+
+        if (!string.IsNullOrEmpty(type))
+        {
+            query = query.Where(x => x.Type == type);
+        }
+
+        return await query.ToListAsync();
     }
 
     public bool ProductExists(int id)
@@ -56,5 +68,10 @@ public class ProductRepository(StoreContext context) : IProductRepository
     public void UpdateProduct(Product product)
     {
         context.Entry(product).State = EntityState.Modified;
+    }
+
+    public Task<object?> GetProductsAsync()
+    {
+        throw new NotImplementedException();
     }
 }
