@@ -11,7 +11,7 @@ import { MatIcon } from '@angular/material/icon';
     MatBadge
   ],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss',
+  styleUrl: './header.component.css',
 })
 export class HeaderComponent {
 
