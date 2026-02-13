@@ -5,22 +5,15 @@ import { HttpClient } from '@angular/common/http';
 import { Product } from './shared/models/product';
 import { Pagination } from './shared/models/pagination';
 import { ShopService } from './core/services/shop.service';
+import { ShopComponent } from "./features/shop/shop.component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, HeaderComponent],
+  imports: [RouterOutlet, HeaderComponent, ShopComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit {
-  private shopService = inject(ShopService);
-  title = 'Skinet';
-  products: Product[] = [];
+export class AppComponent {
+  titile = 'Skinet';
 
-  ngOnInit(): void {
-    this.shopService.getProducts().subscribe({
-      next: response => this.products = response.data,
-      error: error => console.log(error)
-    })
-  }
 }
