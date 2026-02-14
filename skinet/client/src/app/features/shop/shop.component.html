@@ -22,7 +22,7 @@
 <mat-menu #sortMenu="matMenu">
   <mat-selection-list [multiple]="false" (selectionChange)="onSortChange($event)">
     @for (sort of sortOptions; track $index) {
-      <mat-list-option [value]="sort.value" (click)="selectedSort = sort.value">
+      <mat-list-option [value]="sort.value" (click)="shopParams.sort == sort.value">
         {{ sort.name }}
       </mat-list-option>
      }
