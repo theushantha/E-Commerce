@@ -17,6 +17,10 @@
   ));
 }
 
+.match-input-height {
+  height: var(--mat-form-field-container-height) !important; 
+}
+
 html {
   height: 100%;
   @include mat.theme((
