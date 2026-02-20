@@ -50,3 +50,19 @@ body {
   margin: 0;
   height: 100%;
 }
+
+.snackbar-error {
+  @include mat.snack-bar-overrides((
+    button-color: white,
+    container-color: red,
+    supporting-text-color: white,
+  ));
+}
+
+.snackbar-success {
+  @include mat.snack-bar-overrides((
+    button-color: white,
+    container-color: green,
+    supporting-text-color: white,
+  ));
+}
