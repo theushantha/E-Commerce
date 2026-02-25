@@ -13,6 +13,7 @@
     <Folder Include="Config/" />
     <Folder Include="Data/" />
     <Folder Include="Data/SeedData/" />
+    <Folder Include="Services/" />
   </ItemGroup>
 
   <PropertyGroup>
