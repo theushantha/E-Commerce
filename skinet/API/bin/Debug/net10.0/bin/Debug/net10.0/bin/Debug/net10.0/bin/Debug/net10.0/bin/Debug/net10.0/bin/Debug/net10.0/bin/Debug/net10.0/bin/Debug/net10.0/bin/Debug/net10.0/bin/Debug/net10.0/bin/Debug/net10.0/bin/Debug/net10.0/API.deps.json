@@ -628,26 +628,6 @@
           }
         }
       },
-      "Pipelines.Sockets.Unofficial/2.2.8": {
-        "runtime": {
-          "lib/net5.0/Pipelines.Sockets.Unofficial.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "2.2.8.1080"
-          }
-        }
-      },
-      "StackExchange.Redis/2.11.3": {
-        "dependencies": {
-          "Pipelines.Sockets.Unofficial": "2.2.8",
-          "System.IO.Hashing": "10.0.2"
-        },
-        "runtime": {
-          "lib/net8.0/StackExchange.Redis.dll": {
-            "assemblyVersion": "2.0.0.0",
-            "fileVersion": "2.11.3.10884"
-          }
-        }
-      },
       "System.ClientModel/1.5.1": {
         "dependencies": {
           "System.Memory.Data": "8.0.1"
@@ -750,14 +730,6 @@
           }
         }
       },
-      "System.IO.Hashing/10.0.2": {
-        "runtime": {
-          "lib/net10.0/System.IO.Hashing.dll": {
-            "assemblyVersion": "10.0.0.2",
-            "fileVersion": "10.0.225.61305"
-          }
-        }
-      },
       "System.Memory.Data/8.0.1": {
         "runtime": {
           "lib/net8.0/System.Memory.Data.dll": {
@@ -785,8 +757,7 @@
       "Infrastructure/1.0.0": {
         "dependencies": {
           "Core": "1.0.0",
-          "Microsoft.EntityFrameworkCore.SqlServer": "10.0.2",
-          "StackExchange.Redis": "2.11.3"
+          "Microsoft.EntityFrameworkCore.SqlServer": "10.0.2"
         },
         "runtime": {
           "Infrastructure.dll": {
@@ -1020,20 +991,6 @@
       "path": "newtonsoft.json/13.0.3",
       "hashPath": "newtonsoft.json.13.0.3.nupkg.sha512"
     },
-    "Pipelines.Sockets.Unofficial/2.2.8": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-zG2FApP5zxSx6OcdJQLbZDk2AVlN2BNQD6MorwIfV6gVj0RRxWPEp2LXAxqDGZqeNV1Zp0BNPcNaey/GXmTdvQ==",
-      "path": "pipelines.sockets.unofficial/2.2.8",
-      "hashPath": "pipelines.sockets.unofficial.2.2.8.nupkg.sha512"
-    },
-    "StackExchange.Redis/2.11.3": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-/Uxwsyue5f4bXRRmV/apNNTWkrvVYQZnhYiPJJaUJpBuiAsyGxo4mGoXE4QFnzivV9vvH1cc5DjjnsLi69nd2Q==",
-      "path": "stackexchange.redis/2.11.3",
-      "hashPath": "stackexchange.redis.2.11.3.nupkg.sha512"
-    },
     "System.ClientModel/1.5.1": {
       "type": "package",
       "serviceable": true,
@@ -1103,13 +1060,6 @@
       "sha512": "sha512-rQkO1YbAjLwnDJSMpRhRtrc6XwIcEOcUvoEcge+evurpzSZM3UNK+MZfD3sKyTlYsvknZ6eJjSBfnmXqwOsT9Q==",
       "path": "system.identitymodel.tokens.jwt/7.7.1",
       "hashPath": "system.identitymodel.tokens.jwt.7.7.1.nupkg.sha512"
-    },
-    "System.IO.Hashing/10.0.2": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-AKJknIFi9O3+rGExxTry188JPvUoZAPcCtS2qdqyFhIzsxQ1Ap94BeGDG0VzVEHakhmRxmJtVih6TsHoghIt/g==",
-      "path": "system.io.hashing/10.0.2",
-      "hashPath": "system.io.hashing.10.0.2.nupkg.sha512"
     },
     "System.Memory.Data/8.0.1": {
       "type": "package",
