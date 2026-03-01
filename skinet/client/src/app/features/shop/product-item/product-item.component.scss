@@ -1,9 +1,23 @@
 .product-card {
     transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.product-card Mat-card-image {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
 }
 
 .product-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     cursor: pointer;
+}
+
+::ng-deep .product-card mat-card-image {
+    height: 280px !important;
+    object-fit: cover;
 }

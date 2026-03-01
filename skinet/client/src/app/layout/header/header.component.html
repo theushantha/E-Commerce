@@ -1,29 +1,43 @@
-<header class="shadow-md p-3 w-full max-h-20 fixed top-0 z-50 bg-white"> ">
-    <div class="flex align-middle items-center justify-between max-w-screen-2xl mx-auto">
-        <img routerLink="/" src="/images/logo.png" alt="app logo" class="max-h-16">
-        <nav class="flex gap-3 my-2 uppercase text-2xl">
-            <a routerLink="/" 
-                routerLinkActive="active"
-                [routerLinkActiveOptions]="{exact: true}"
-            >Home</a>
-            <a routerLink="/shop" routerLinkActive="active">Shop</a>
-            <a routerLink="/test-error" routerLinkActive="active">Errors</a>
-        </nav>
-        <div class="flex gap-3 align-middle">
-            <a routerLink="/cart" routerLinkActive="active" 
-                matBadge="{{ cartService.itemCount()}}"
-                matBadgeSize="large"
-                class="custom-badge mt-2 mr-2">
-                <mat-icon>shopping_cart</mat-icon>
-            </a>
-            <button mat-stroked-button>Login</button>
-            <button mat-stroked-button>Register</button>
-        </div>
-       
+<mat-toolbar class="header-toolbar">
+  <!-- Logo Section (Left) -->
+  <div class="navbar-logo">
+    <img routerLink="/" src="/images/logo.png" alt="app logo">
+  </div>
 
-    </div> 
-</header>
+  <!-- Navigation Section (Center) -->
+  <nav class="navbar-nav">
+    <a routerLink="/" 
+       routerLinkActive="nav-active"
+       [routerLinkActiveOptions]="{exact: true}"
+       class="nav-link">
+      Home
+    </a>
+    <a routerLink="/shop" 
+       routerLinkActive="nav-active"
+       class="nav-link">
+      Shop
+    </a>
+    <a routerLink="/test-error" 
+       routerLinkActive="nav-active"
+       class="nav-link">
+      Errors
+    </a>
+  </nav>
+
+  <!-- Actions Section (Right) -->
+  <div class="navbar-actions">
+    <a routerLink="/cart" 
+       routerLinkActive="nav-active" 
+       matBadge="{{ cartService.itemCount()}}"
+       matBadgeSize="large"
+       class="cart-icon">
+      <mat-icon>shopping_cart</mat-icon>
+    </a>
+    <button mat-stroked-button color="primary">Login</button>
+    <button mat-stroked-button color="primary">Register</button>
+  </div>
+</mat-toolbar>
 
 @if (busyService.loading) {
-    <mat-progress-bar mode="indeterminate" class="fixed top-20 z=50"></mat-progress-bar>
+  <mat-progress-bar mode="indeterminate" class="progress-bar"></mat-progress-bar>
 }
