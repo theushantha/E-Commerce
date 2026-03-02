@@ -16,7 +16,7 @@
       </a>
 
       <div class="mt-2">
-        <button mat-button class="text-red-600!">
+        <button mat-button class="text-red-600!" (click)="removeItemFromCart()">
           <mat-icon class="text-red-600!">delete</mat-icon>
           Delete
         </button>
@@ -29,7 +29,7 @@
       <!-- Quantity -->
       <div class="flex items-center gap-4 text-lg font-semibold">
 
-        <button mat-icon-button>
+        <button mat-icon-button (click)="decrementQuantity()">
           <mat-icon class="text-red-600!">remove</mat-icon>
         </button>
 
@@ -37,7 +37,7 @@
           {{ item().quantity }}
         </span>
 
-        <button mat-icon-button>
+        <button mat-icon-button (click)="incrementQuantity()">
           <mat-icon class="text-green-600!">add</mat-icon>
         </button>
 
