@@ -14,3 +14,5 @@
 /Users/ushanthaarachchi/Documents/GitHub/E-Commerce-/skinet/Infrastructure/obj/Debug/net10.0/refint/Infrastructure.dll
 /Users/ushanthaarachchi/Documents/GitHub/E-Commerce-/skinet/Infrastructure/obj/Debug/net10.0/Infrastructure.pdb
 /Users/ushanthaarachchi/Documents/GitHub/E-Commerce-/skinet/Infrastructure/obj/Debug/net10.0/ref/Infrastructure.dll
+/Users/ushanthaarachchi/Documents/GitHub/E-Commerce-/skinet/Infrastructure/bin/Debug/net10.0/Data/SeedData/delivery.json
+/Users/ushanthaarachchi/Documents/GitHub/E-Commerce-/skinet/Infrastructure/bin/Debug/net10.0/Data/SeedData/products.json

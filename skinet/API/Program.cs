@@ -39,8 +39,11 @@ app.UseCors(x => x
     .AllowAnyHeader()
 );
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.MapControllers();
+app.MapFallbackToController("Index", "Fallback");
 
 try
 {
