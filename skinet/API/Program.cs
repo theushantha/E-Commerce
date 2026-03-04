@@ -48,7 +48,7 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.MapControllers();
-app.MapIdentityApi<AppUser>();
+app.MapGroup("api").MapIdentityApi<AppUser>(); 
 app.MapFallbackToController("Index", "Fallback");
 
 try
