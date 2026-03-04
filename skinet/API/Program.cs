@@ -42,6 +42,7 @@ app.UseCors(x => x
     .WithOrigins("http://localhost:4200", "https://localhost:4200")
     .AllowAnyMethod()
     .AllowAnyHeader()
+    .AllowCredentials()
 );
 
 app.UseDefaultFiles();
