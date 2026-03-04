@@ -25,7 +25,15 @@ public class AccountController(SignInManager<AppUser> signInManager) : BaseApiCo
 
         var result = await signInManager.UserManager.CreateAsync(user, registerDto.Password);
 
-        if (!result.Succeeded) return BadRequest(result.Errors);
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(error.Code, error.Description);
+            }
+
+            return ValidationProblem();
+        }
 
         return Ok();
     }
