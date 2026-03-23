@@ -17,8 +17,17 @@ public class CartService(IConnectionMultiplexer redis) : ICartService
     public async Task<ShoppingCart?> GetCartAsync(string key)
     {
         var data = await _database.StringGetAsync(key);
-        return data.IsNullOrEmpty ? null : JsonSerializer.Deserialize<ShoppingCart>((byte[])data!);
-    
+        if (data.IsNullOrEmpty) return null;
+        
+        try
+        {
+            return JsonSerializer.Deserialize<ShoppingCart>((byte[])data!);
+        }
+        catch
+        {
+            // If deserialization fails, return null so a new cart can be created
+            return null;
+        }
     }
         
 
