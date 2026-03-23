@@ -54,7 +54,10 @@ export class LoginComponent {
     this.accountService.login(this.loginForm.value).subscribe({
       next: () => {
         this.accountService.getUserInfo();
-        this.router.navigateByUrl('/shop');
+        // Check if there's a return URL stored
+        const returnUrl = sessionStorage.getItem('returnUrl');
+        sessionStorage.removeItem('returnUrl');
+        this.router.navigateByUrl(returnUrl || '/shop');
       },
       error: (error) => {
         this.isLoading.set(false);
