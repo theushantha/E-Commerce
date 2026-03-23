@@ -29,6 +29,8 @@ import { Router, RouterLink } from '@angular/router';
   styleUrl: './register.component.scss',
 })
 export class RegisterComponent {
+  private readonly namePattern = /^[A-Za-z][A-Za-z' -]*$/;
+
   private fb = inject(FormBuilder);
   private accountService = inject(AccountService);
   private router = inject(Router);
@@ -40,10 +42,10 @@ export class RegisterComponent {
   successMessage = signal('');
 
   registerForm = this.fb.group({
-    firstName: ['', [Validators.required, Validators.minLength(2)]],
-    lastName: ['', [Validators.required, Validators.minLength(2)]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6), this.passwordStrengthValidator]],
+    firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern(this.namePattern)]],
+    lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern(this.namePattern)]],
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
+    password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100), this.passwordStrengthValidator]],
     confirmPassword: ['', [Validators.required]]
   }, { validators: this.passwordMatchValidator });
 
@@ -72,6 +74,7 @@ export class RegisterComponent {
 
   onSubmit() {
     if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
       this.errorMessage.set('Please fill in all fields correctly');
       return;
     }
@@ -84,18 +87,25 @@ export class RegisterComponent {
 
     this.accountService.register(registerData).subscribe({
       next: () => {
-        this.successMessage.set('Registration successful! Redirecting...');
-        // Check if there's a return URL stored, otherwise go to shop
-        const returnUrl = sessionStorage.getItem('returnUrl');
-        sessionStorage.removeItem('returnUrl');
+        this.isLoading.set(false);
+        this.successMessage.set('Registration successful! Redirecting to login...');
         setTimeout(() => {
-          this.router.navigateByUrl(returnUrl || '/shop');
+          this.router.navigateByUrl('/account/login');
         }, 1500);
       },
       error: (error) => {
         this.isLoading.set(false);
+        const validationErrors = error.error?.errors;
+
+        let firstValidationMessage: string | null = null;
+        if (Array.isArray(validationErrors)) {
+          firstValidationMessage = validationErrors[0] ?? null;
+        } else if (validationErrors && typeof validationErrors === 'object') {
+          firstValidationMessage = Object.values(validationErrors).flat()[0] as string;
+        }
+
         this.errorMessage.set(
-          error.error?.message || error.error?.errors?.[0] || 'Registration failed. Please try again.'
+          error.error?.message || firstValidationMessage || 'Registration failed. Please try again.'
         );
       }
     });

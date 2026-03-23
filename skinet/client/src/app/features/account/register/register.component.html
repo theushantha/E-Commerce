@@ -23,6 +23,8 @@
             matInput 
             formControlName="firstName" 
             type="text"
+            maxlength="50"
+            autocomplete="given-name"
             placeholder="Enter your first name"
           />
           <mat-error *ngIf="registerForm.get('firstName')?.hasError('required')">
@@ -30,6 +32,12 @@
           </mat-error>
           <mat-error *ngIf="registerForm.get('firstName')?.hasError('minlength')">
             First name must be at least 2 characters
+          </mat-error>
+          <mat-error *ngIf="registerForm.get('firstName')?.hasError('maxlength')">
+            First name cannot be longer than 50 characters
+          </mat-error>
+          <mat-error *ngIf="registerForm.get('firstName')?.hasError('pattern')">
+            First name can only contain letters, spaces, apostrophes, and hyphens
           </mat-error>
         </mat-form-field>
 
@@ -40,6 +48,8 @@
             matInput 
             formControlName="lastName" 
             type="text"
+            maxlength="50"
+            autocomplete="family-name"
             placeholder="Enter your last name"
           />
           <mat-error *ngIf="registerForm.get('lastName')?.hasError('required')">
@@ -47,6 +57,12 @@
           </mat-error>
           <mat-error *ngIf="registerForm.get('lastName')?.hasError('minlength')">
             Last name must be at least 2 characters
+          </mat-error>
+          <mat-error *ngIf="registerForm.get('lastName')?.hasError('maxlength')">
+            Last name cannot be longer than 50 characters
+          </mat-error>
+          <mat-error *ngIf="registerForm.get('lastName')?.hasError('pattern')">
+            Last name can only contain letters, spaces, apostrophes, and hyphens
           </mat-error>
         </mat-form-field>
 
@@ -57,6 +73,8 @@
             matInput 
             formControlName="email" 
             type="email"
+            maxlength="100"
+            autocomplete="email"
             placeholder="Enter your email"
           />
           <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
@@ -64,6 +82,9 @@
           </mat-error>
           <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
             Please enter a valid email address
+          </mat-error>
+          <mat-error *ngIf="registerForm.get('email')?.hasError('maxlength')">
+            Email cannot be longer than 100 characters
           </mat-error>
         </mat-form-field>
 
@@ -74,6 +95,8 @@
             matInput 
             formControlName="password" 
             [type]="hidePassword() ? 'password' : 'text'"
+            maxlength="100"
+            autocomplete="new-password"
             placeholder="Enter a strong password"
           />
           <button 
@@ -94,6 +117,9 @@
           <mat-error *ngIf="registerForm.get('password')?.hasError('passwordStrength')">
             {{ getPasswordStrengthHint() }}
           </mat-error>
+          <mat-error *ngIf="registerForm.get('password')?.hasError('maxlength')">
+            Password cannot be longer than 100 characters
+          </mat-error>
         </mat-form-field>
 
         <!-- Confirm Password Field -->
@@ -103,6 +129,8 @@
             matInput 
             formControlName="confirmPassword" 
             [type]="hideConfirmPassword() ? 'password' : 'text'"
+            maxlength="100"
+            autocomplete="new-password"
             placeholder="Re-enter your password"
           />
           <button 

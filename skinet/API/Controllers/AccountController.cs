@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Security.Claims;
 using API.DTOs;
 using API.Extensions;
@@ -12,30 +13,70 @@ namespace API.Controllers;
 
 public class AccountController(SignInManager<AppUser> signInManager) : BaseApiController
 {
+    [HttpPost("login")]
+    public async Task<ActionResult> Login(LoginDto loginDto)
+    {
+        var user = await signInManager.UserManager.FindByEmailAsync(loginDto.Email);
+        
+        if (user == null)
+        {
+            return Unauthorized(new { message = "Invalid email or password" });
+        }
+
+        var result = await signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+        
+        if (!result.Succeeded)
+        {
+            return Unauthorized(new { message = "Invalid email or password" });
+        }
+
+        // Return the user info - token will be handled by Identity API endpoints
+        return Ok(new
+        {
+            email = user.Email,
+            firstName = user.FirstName,
+            lastName = user.LastName
+        });
+    }
+
     [HttpPost("register")]
     public async Task<ActionResult> Register(RegisterDto registerDto)
     {
+        var email = registerDto.Email.Trim();
+
+        var existingUser = await signInManager.UserManager.FindByEmailAsync(email);
+        if (existingUser != null)
+        {
+            return BadRequest(new { message = "An account with this email already exists." });
+        }
+
         var user = new AppUser
         {
             FirstName = registerDto.FirstName,
             LastName = registerDto.LastName,
-            Email = registerDto.Email,
-            UserName = registerDto.Email
+            Email = email,
+            UserName = email
         };
 
         var result = await signInManager.UserManager.CreateAsync(user, registerDto.Password);
 
         if (!result.Succeeded)
         {
-            foreach (var error in result.Errors)
+            var errors = result.Errors.Select(e => e.Description).ToArray();
+            return BadRequest(new
             {
-                ModelState.AddModelError(error.Code, error.Description);
-            }
-
-            return ValidationProblem();
+                message = errors.FirstOrDefault() ?? "Registration failed.",
+                errors
+            });
         }
 
-        return Ok();
+        // Return the user info
+        return Ok(new
+        {
+            email = user.Email,
+            firstName = user.FirstName,
+            lastName = user.LastName
+        });
     }
 
     [Authorize]
@@ -88,3 +129,4 @@ public class AccountController(SignInManager<AppUser> signInManager) : BaseApiCo
     }
    
 }
+

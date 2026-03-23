@@ -33,8 +33,35 @@
        class="cart-icon">
       <mat-icon>shopping_cart</mat-icon>
     </a>
-    <button routerLink="/account/login" mat-stroked-button color="primary">Login</button>
-    <button routerLink="/account/register" mat-stroked-button color="primary">Register</button>
+
+    <!-- User Profile Menu (shown when logged in) -->
+    @if (accountService.isLoggedIn()) {
+      <button mat-button [matMenuTriggerFor]="userMenu" class="profile-button">
+        <mat-icon>account_circle</mat-icon>
+        <span class="profile-name">{{ accountService.currentUser()?.firstName }} {{ accountService.currentUser()?.lastName }}</span>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item routerLink="/account/profile">
+          <mat-icon>person</mat-icon>
+          <span>My Profile</span>
+        </button>
+        <button mat-menu-item routerLink="/account/orders">
+          <mat-icon>receipt</mat-icon>
+          <span>My Orders</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="onLogout()">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    }
+
+    <!-- Login & Register Buttons (shown when not logged in) -->
+    @if (!accountService.isLoggedIn()) {
+      <button routerLink="/account/login" mat-stroked-button color="primary">Login</button>
+      <button routerLink="/account/register" mat-stroked-button color="primary">Register</button>
+    }
   </div>
 </mat-toolbar>
 

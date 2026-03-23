@@ -89,6 +89,37 @@
   width: 28px;
 }
 
+/* Profile Button */
+.profile-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: #333;
+  text-transform: none;
+  font-weight: 500;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.profile-button:hover {
+  background-color: #f5f5f5;
+  color: #7d00fa;
+}
+
+.profile-button mat-icon {
+  font-size: 24px;
+  height: 24px;
+  width: 24px;
+}
+
+.profile-name {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Progress Bar */
 .progress-bar {
   position: fixed;

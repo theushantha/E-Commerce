@@ -1,8 +1,8 @@
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Address, User } from '../../shared/models/user';
-import { tap } from 'rxjs';
+import { tap, switchMap } from 'rxjs';
 
 export interface AuthResponse {
   user: User;
@@ -23,34 +23,33 @@ export class AccountService {
   });
 
   login(values: any) {
-    let params = new HttpParams();
-    params = params.append('useCookies', true);
-
-    return this.http.post<AuthResponse>(this.baseUrl + 'login', values, {params}).pipe(
+    // Using the framework's built-in /api/login endpoint via MapIdentityApi
+    return this.http.post<any>(this.baseUrl + 'login', values).pipe(
       tap(response => {
-        if (response.token) {
-          this.setToken(response.token);
+        if (response.accessToken) {
+          this.setToken(response.accessToken);
         }
-        this.currentUser.set(response.user);
-      })
+      }),
+      switchMap(() => this.getUserInfo())
     );
   }
   
   register(values: any) {
-    return this.http.post<AuthResponse>(this.baseUrl + 'account/register', values).pipe(
-      tap(response => {
-        if (response.token) {
-          this.setToken(response.token);
-        }
-        this.currentUser.set(response.user);
-      })
-    );
+    const payload = {
+      firstName: values.firstName?.trim() ?? '',
+      lastName: values.lastName?.trim() ?? '',
+      email: values.email?.trim() ?? '',
+      password: values.password ?? '',
+    };
+
+    // Create account only; UI decides where to navigate next.
+    return this.http.post<any>(this.baseUrl + 'account/register', payload);
   }
   
   getUserInfo() {
-    return this.http.get<User>(this.baseUrl + 'account/user-info').subscribe({
-      next: (user) => this.currentUser.set(user)
-    });
+    return this.http.get<User>(this.baseUrl + 'account/user-info').pipe(
+      tap(user => this.currentUser.set(user))
+    );
   }
 
   logout() {

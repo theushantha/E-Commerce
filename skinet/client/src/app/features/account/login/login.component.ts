@@ -38,12 +38,13 @@ export class LoginComponent {
   hidePassword = signal(true);
 
   loginForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
+    password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]]
   });
 
   onSubmit() {
     if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
       this.errorMessage.set('Please fill in all fields correctly');
       return;
     }
@@ -51,9 +52,12 @@ export class LoginComponent {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    this.accountService.login(this.loginForm.value).subscribe({
+    const formValue = this.loginForm.getRawValue();
+    this.accountService.login({
+      email: formValue.email?.trim(),
+      password: formValue.password,
+    }).subscribe({
       next: () => {
-        this.accountService.getUserInfo();
         // Check if there's a return URL stored
         const returnUrl = sessionStorage.getItem('returnUrl');
         sessionStorage.removeItem('returnUrl');

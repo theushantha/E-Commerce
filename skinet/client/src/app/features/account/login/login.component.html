@@ -18,6 +18,8 @@
             matInput 
             formControlName="email" 
             type="email"
+            maxlength="100"
+            autocomplete="email"
             placeholder="Enter your email"
           />
           <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
@@ -25,6 +27,9 @@
           </mat-error>
           <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
             Please enter a valid email address
+          </mat-error>
+          <mat-error *ngIf="loginForm.get('email')?.hasError('maxlength')">
+            Email cannot be longer than 100 characters
           </mat-error>
         </mat-form-field>
 
@@ -35,6 +40,8 @@
             matInput 
             formControlName="password" 
             [type]="hidePassword() ? 'password' : 'text'"
+            maxlength="100"
+            autocomplete="current-password"
             placeholder="Enter your password"
           />
           <button 
@@ -51,6 +58,9 @@
           </mat-error>
           <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
             Password must be at least 6 characters
+          </mat-error>
+          <mat-error *ngIf="loginForm.get('password')?.hasError('maxlength')">
+            Password cannot be longer than 100 characters
           </mat-error>
         </mat-form-field>
 
