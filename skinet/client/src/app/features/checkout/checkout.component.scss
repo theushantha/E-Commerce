@@ -1,0 +1,194 @@
+.checkout-shell {
+	background: #f6f7fb;
+	min-height: calc(100vh - 64px);
+	padding: 2rem 1.5rem;
+}
+
+.checkout-grid {
+	max-width: 1200px;
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 320px;
+	gap: 1rem;
+}
+
+.checkout-main,
+.summary-card,
+.voucher-card {
+	background: #fff;
+	border: 1px solid #e8e8ef;
+	border-radius: 12px;
+}
+
+.checkout-main {
+	padding: 1rem;
+}
+
+.steps-row {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 0.75rem;
+	margin-bottom: 1rem;
+}
+
+.step {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: #77798a;
+	font-weight: 600;
+	font-size: 0.9rem;
+}
+
+.step.active {
+	color: #2f3241;
+}
+
+.step-dot {
+	width: 24px;
+	height: 24px;
+	border-radius: 999px;
+	display: grid;
+	place-items: center;
+	background: #eef0f8;
+}
+
+.step.active .step-dot {
+	background: #2f3241;
+	color: #fff;
+}
+
+.panel {
+	border: 1px solid #ececf3;
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+.full {
+	width: 100%;
+}
+
+.split {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 0.75rem;
+}
+
+.panel-footer {
+	margin-top: 1rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+.footer-right {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.shipping-panel,
+.payment-panel,
+.confirm-panel {
+	min-height: 250px;
+}
+
+.muted {
+	color: #7a7d90;
+}
+
+.centered {
+	min-height: 140px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.payment-element {
+	min-height: 120px;
+	border: 1px solid #ececf3;
+	border-radius: 8px;
+	padding: 0.75rem;
+	background: #fff;
+}
+
+.error-text {
+	margin-top: 0.75rem;
+	color: #c52d2d;
+	font-weight: 600;
+}
+
+.checkout-side {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.summary-card,
+.voucher-card {
+	padding: 1rem;
+}
+
+.summary-card h3,
+.voucher-card h4 {
+	margin: 0 0 0.75rem;
+}
+
+.summary-card dl {
+	margin: 0;
+	display: grid;
+	gap: 0.6rem;
+}
+
+.summary-card dl div {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	color: #5e6172;
+}
+
+.summary-card .discount {
+	color: #29a65c;
+	font-weight: 700;
+}
+
+.summary-card .total-row {
+	margin-top: 0.6rem;
+	padding-top: 0.6rem;
+	border-top: 1px solid #ececf3;
+	font-weight: 700;
+	color: #1c1f2e;
+}
+
+.voucher-status {
+	margin: 0 0 0.75rem;
+	color: #29a65c;
+	font-weight: 600;
+}
+
+.error-status {
+	color: #c52d2d;
+}
+
+@media (max-width: 992px) {
+	.checkout-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.split {
+		grid-template-columns: 1fr;
+	}
+
+	.panel-footer {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.footer-right {
+		width: 100%;
+		justify-content: space-between;
+	}
+}

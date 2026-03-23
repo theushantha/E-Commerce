@@ -659,6 +659,18 @@
           }
         }
       },
+      "Stripe.net/49.0.0": {
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3",
+          "System.Configuration.ConfigurationManager": "9.0.4"
+        },
+        "runtime": {
+          "lib/net8.0/Stripe.net.dll": {
+            "assemblyVersion": "49.0.0.0",
+            "fileVersion": "49.0.0.0"
+          }
+        }
+      },
       "System.ClientModel/1.5.1": {
         "dependencies": {
           "System.Memory.Data": "8.0.1"
@@ -798,7 +810,8 @@
           "Core": "1.0.0",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "10.0.0",
           "Microsoft.EntityFrameworkCore.SqlServer": "10.0.2",
-          "StackExchange.Redis": "2.11.3"
+          "StackExchange.Redis": "2.11.3",
+          "Stripe.net": "49.0.0"
         },
         "runtime": {
           "Infrastructure.dll": {
@@ -1052,6 +1065,13 @@
       "sha512": "sha512-/Uxwsyue5f4bXRRmV/apNNTWkrvVYQZnhYiPJJaUJpBuiAsyGxo4mGoXE4QFnzivV9vvH1cc5DjjnsLi69nd2Q==",
       "path": "stackexchange.redis/2.11.3",
       "hashPath": "stackexchange.redis.2.11.3.nupkg.sha512"
+    },
+    "Stripe.net/49.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-cETS35+ebUI9Jy/XapirLp11P7fd5ibzM8uckhVBl09K0vKCPyoJ8MNMZpK7+bg3zPzmyxd5aCg1L/aWejB5zQ==",
+      "path": "stripe.net/49.0.0",
+      "hashPath": "stripe.net.49.0.0.nupkg.sha512"
     },
     "System.ClientModel/1.5.1": {
       "type": "package",

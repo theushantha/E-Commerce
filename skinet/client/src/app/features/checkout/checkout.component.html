@@ -1,3 +1,169 @@
-<div class="mt-5">
-    <h1 class="text-2xl">Only authorized users should be able to see this!</h1>
+<div class="checkout-shell">
+    <div class="checkout-grid">
+        <section class="checkout-main">
+            <div class="steps-row">
+                <div class="step" [class.active]="currentStep() >= 1">
+                    <span class="step-dot">1</span>
+                    <span>Address</span>
+                </div>
+                <div class="step" [class.active]="currentStep() >= 2">
+                    <span class="step-dot">2</span>
+                    <span>Shipping</span>
+                </div>
+                <div class="step" [class.active]="currentStep() >= 3">
+                    <span class="step-dot">3</span>
+                    <span>Payment</span>
+                </div>
+                <div class="step" [class.active]="currentStep() >= 4">
+                    <span class="step-dot">4</span>
+                    <span>Confirmation</span>
+                </div>
+            </div>
+
+            @if (currentStep() === 1) {
+                <form class="panel" [formGroup]="addressForm" (ngSubmit)="continueFromAddress()">
+                    <mat-form-field appearance="outline" class="full">
+                        <mat-label>Full name</mat-label>
+                        <input matInput formControlName="fullName" />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full">
+                        <mat-label>Country or region</mat-label>
+                        <input matInput formControlName="country" />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full">
+                        <mat-label>Address line 1</mat-label>
+                        <input #line1Input matInput formControlName="line1" />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full">
+                        <mat-label>Address line 2</mat-label>
+                        <input matInput formControlName="line2" />
+                    </mat-form-field>
+
+                    <div class="split">
+                        <mat-form-field appearance="outline">
+                            <mat-label>City</mat-label>
+                            <input matInput formControlName="city" />
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>State</mat-label>
+                            <input matInput formControlName="state" />
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>ZIP</mat-label>
+                            <input matInput formControlName="postalCode" />
+                        </mat-form-field>
+                    </div>
+
+                    <div class="panel-footer">
+                        <button mat-stroked-button color="primary" type="button" (click)="backToShop()">
+                            Continue shopping
+                        </button>
+                        <div class="footer-right">
+                            <mat-checkbox formControlName="saveAsDefault">Save as default address</mat-checkbox>
+                            <button mat-flat-button color="primary" type="submit" [disabled]="isSavingAddress()">
+                                @if (isSavingAddress()) {
+                                    <mat-spinner diameter="20"></mat-spinner>
+                                } @else {
+                                    Next
+                                }
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            }
+
+            @if (currentStep() === 2) {
+                <div class="panel shipping-panel">
+                    <h3>Shipping method</h3>
+                    <p>Standard shipping (2-4 business days)</p>
+                    <div class="panel-footer">
+                        <button mat-stroked-button color="primary" type="button" (click)="goToStep(1)">Back</button>
+                        <button mat-flat-button color="primary" type="button" (click)="continueFromShipping()">Next</button>
+                    </div>
+                </div>
+            }
+
+            @if (currentStep() === 3) {
+                <div class="panel payment-panel">
+                    <h3>Payment details</h3>
+                    <p class="muted">Use test card 4242 4242 4242 4242, any future date, any CVC.</p>
+
+                    @if (isPreparingPayment()) {
+                        <div class="centered">
+                            <mat-spinner diameter="28"></mat-spinner>
+                            <span>Preparing secure payment form...</span>
+                        </div>
+                    } @else {
+                        <div id="payment-element" class="payment-element"></div>
+                    }
+
+                    @if (paymentError()) {
+                        <p class="error-text">{{ paymentError() }}</p>
+                    }
+
+                    <div class="panel-footer">
+                        <button mat-stroked-button color="primary" type="button" (click)="goToStep(2)">Back</button>
+                        <button mat-flat-button color="primary" type="button" (click)="submitPayment()" [disabled]="isPaying() || isPreparingPayment()">
+                            @if (isPaying()) {
+                                <mat-spinner diameter="20"></mat-spinner>
+                            } @else {
+                                Pay {{ total | currency }}
+                            }
+                        </button>
+                    </div>
+                </div>
+            }
+
+            @if (currentStep() === 4) {
+                <div class="panel confirm-panel">
+                    <h3>Order confirmed</h3>
+                    <p>{{ paymentSuccess() || 'Your order has been placed successfully.' }}</p>
+                    <button mat-flat-button color="primary" routerLink="/shop">Continue shopping</button>
+                </div>
+            }
+        </section>
+
+        <aside class="checkout-side">
+            <div class="summary-card">
+                <h3>Order summary</h3>
+                <dl>
+                    <div>
+                        <dt>Subtotal</dt>
+                        <dd>{{ subtotal | currency }}</dd>
+                    </div>
+                    <div>
+                        <dt>Discount</dt>
+                        <dd class="discount">-{{ discount | currency }}</dd>
+                    </div>
+                    <div>
+                        <dt>Delivery fee</dt>
+                        <dd>{{ shipping | currency }}</dd>
+                    </div>
+                    <div class="total-row">
+                        <dt>Total</dt>
+                        <dd>{{ total | currency }}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <div class="voucher-card">
+                <h4>Do you have a voucher code?</h4>
+                @if (voucherMessage()) {
+                    <p class="voucher-status" [class.error-status]="discountRate() === 0">{{ voucherMessage() }}</p>
+                }
+                <form [formGroup]="voucherForm" (ngSubmit)="applyVoucher()">
+                    <mat-form-field appearance="outline" class="full">
+                        <mat-label>Voucher code</mat-label>
+                        <input matInput formControlName="code" />
+                    </mat-form-field>
+                    <button mat-flat-button color="primary" class="full" type="submit">Apply code</button>
+                </form>
+            </div>
+        </aside>
+    </div>
 </div>
