@@ -6,11 +6,13 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { Router, RouterLink } from '@angular/router';
 import { loadStripe, Stripe, StripeElements, StripePaymentElement } from '@stripe/stripe-js';
 import { AccountService } from '../../core/services/account.service';
 import { CartService } from '../../core/services/cart.service';
 import { CheckoutService } from '../../core/services/checkout.service';
+import { ShippingOption } from '../../shared/models/shipping';
 import { environment } from '../../../environments/environment';
 
 declare global {
@@ -32,6 +34,8 @@ declare global {
     MatLabel,
     MatInput,
     MatProgressSpinner,
+    MatRadioGroup,
+    MatRadioButton,
   ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss',
@@ -56,6 +60,10 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
   paymentSuccess = signal('');
   voucherMessage = signal('');
   discountRate = signal(0);
+  
+  billingInfo = signal<any>(null);
+  paymentMethodInfo = signal('');
+  selectedAddress = signal<any>(null);
 
   private stripe: Stripe | null = null;
   private elements: StripeElements | null = null;
@@ -78,12 +86,25 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
     code: [''],
   });
 
+  shippingOptions: ShippingOption[] = [
+    { id: 1, name: 'UPS1', price: 10, description: 'Fastest delivery time' },
+    { id: 2, name: 'UPS2', price: 5, description: 'Get it within 5 days' },
+    { id: 3, name: 'UPS3', price: 2, description: 'Slower but cheap' },
+    { id: 4, name: 'FREE', price: 0, description: 'Free! You get what you pay for' },
+  ];
+
+  shippingForm = this.fb.group({
+    shippingMethod: [this.shippingOptions[0].id, Validators.required],
+  });
+
   get subtotal(): number {
     return this.cartService.totals()?.subtotal ?? 0;
   }
 
   get shipping(): number {
-    return this.cartService.totals()?.shipping ?? 0;
+    const selectedId = this.shippingForm.value.shippingMethod;
+    const selected = this.shippingOptions.find((o) => o.id === selectedId);
+    return selected?.price ?? 0;
   }
 
   get discount(): number {
@@ -96,6 +117,10 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get hasClientSecret(): boolean {
     return !!this.cartService.cart()?.clientSecret;
+  }
+
+  selectShippingMethod(optionId: number): void {
+    this.shippingForm.patchValue({ shippingMethod: optionId });
   }
 
   ngOnInit(): void {
@@ -170,6 +195,17 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.isSavingAddress.set(true);
     const value = this.addressForm.getRawValue();
+    
+    // Store the address info for confirmation
+    this.selectedAddress.set({
+      fullName: value.fullName,
+      line1: value.line1,
+      line2: value.line2,
+      city: value.city,
+      state: value.state,
+      country: value.country,
+      postalCode: value.postalCode,
+    });
 
     this.accountService
       .updateAddress({
@@ -205,6 +241,19 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    // Move to confirmation step to review before final payment
+    this.currentStep.set(4);
+  }
+
+  async completeOrder(): Promise<void> {
+    this.paymentError.set('');
+    this.paymentSuccess.set('');
+
+    if (!this.stripe || !this.elements) {
+      this.paymentError.set('Stripe is not ready yet. Please wait a moment and try again.');
+      return;
+    }
+
     this.isPaying.set(true);
 
     const result = await this.stripe.confirmPayment({
@@ -223,7 +272,6 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.paymentSuccess.set('Payment successful. Your order is confirmed.');
-    this.currentStep.set(4);
     this.cartService.deleteCart();
   }
 

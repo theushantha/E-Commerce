@@ -80,7 +80,27 @@
             @if (currentStep() === 2) {
                 <div class="panel shipping-panel">
                     <h3>Shipping method</h3>
-                    <p>Standard shipping (2-4 business days)</p>
+                    
+                    <form [formGroup]="shippingForm" class="shipping-options">
+                        @for (option of shippingOptions; track option.id) {
+                            <div class="shipping-option">
+                                <input 
+                                    type="radio" 
+                                    [id]="'shipping-' + option.id"
+                                    [value]="option.id" 
+                                    formControlName="shippingMethod"
+                                    class="shipping-radio"
+                                />
+                                <label [for]="'shipping-' + option.id" class="shipping-label">
+                                    <div class="shipping-details">
+                                        <span class="shipping-name">{{ option.name }} - {{ option.price | currency }}</span>
+                                        <span class="shipping-description">{{ option.description }}</span>
+                                    </div>
+                                </label>
+                            </div>
+                        }
+                    </form>
+                    
                     <div class="panel-footer">
                         <button mat-stroked-button color="primary" type="button" (click)="goToStep(1)">Back</button>
                         <button mat-flat-button color="primary" type="button" (click)="continueFromShipping()">Next</button>
@@ -112,7 +132,7 @@
                             @if (isPaying()) {
                                 <mat-spinner diameter="20"></mat-spinner>
                             } @else {
-                                Pay {{ total | currency }}
+                                Review Order
                             }
                         </button>
                     </div>
@@ -121,9 +141,54 @@
 
             @if (currentStep() === 4) {
                 <div class="panel confirm-panel">
-                    <h3>Order confirmed</h3>
-                    <p>{{ paymentSuccess() || 'Your order has been placed successfully.' }}</p>
-                    <button mat-flat-button color="primary" routerLink="/shop">Continue shopping</button>
+                    <div class="confirmation-header">
+                        <h3>Billing and delivery information</h3>
+                    </div>
+
+                    <div class="billing-section">
+                        <div class="billing-details">
+                            <h5>Shipping address</h5>
+                            @if (selectedAddress()) {
+                                <p class="address-text">
+                                    {{ selectedAddress().fullName }}<br>
+                                    {{ selectedAddress().line1 }}<br>
+                                    @if (selectedAddress().line2) {
+                                        {{ selectedAddress().line2 }}<br>
+                                    }
+                                    {{ selectedAddress().city }}, {{ selectedAddress().state }} {{ selectedAddress().postalCode }}, {{ selectedAddress().country }}
+                                </p>
+                            }
+                        </div>
+
+                        <div class="billing-details">
+                            <h5>Payment details</h5>
+                            <p class="address-text">MASTERCARD •••• •••• •••• 4444, Exp: 12/2025</p>
+                        </div>
+                    </div>
+
+                    <div class="items-section">
+                        @for (item of cartService.cart()?.items; track item.productId) {
+                            <div class="order-item">
+                                <img [src]="item.pictureUrl" alt="{{ item.productName }}" class="item-image">
+                                <div class="item-details">
+                                    <h6>{{ item.productName }}</h6>
+                                </div>
+                                <div class="item-quantity">x{{ item.quantity }}</div>
+                                <div class="item-price">{{ item.price * item.quantity | currency }}</div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="panel-footer">
+                        <button mat-stroked-button color="primary" type="button" (click)="goToStep(3)">Back</button>
+                        <button mat-flat-button color="primary" type="button" (click)="completeOrder()" [disabled]="isPaying()">
+                            @if (isPaying()) {
+                                <mat-spinner diameter="20"></mat-spinner>
+                            } @else {
+                                Pay {{ total | currency }}
+                            }
+                        </button>
+                    </div>
                 </div>
             }
         </section>
