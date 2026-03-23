@@ -11,6 +11,7 @@ import { loadStripe, Stripe, StripeElements, StripePaymentElement } from '@strip
 import { AccountService } from '../../core/services/account.service';
 import { CartService } from '../../core/services/cart.service';
 import { CheckoutService } from '../../core/services/checkout.service';
+import { CartItem } from '../../shared/models/cart';
 import { ShippingOption } from '../../shared/models/shipping';
 import { environment } from '../../../environments/environment';
 
@@ -272,17 +273,35 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
 
+      const confirmedAt = new Date().toISOString();
       const paymentMethodType = (result as any)?.paymentIntent?.payment_method_types?.[0] as string | undefined;
       const confirmationAddress = this.selectedAddress() ?? this.addressForm.getRawValue();
+      const items = [...(this.cartService.cart()?.items ?? [])] as CartItem[];
+      const subtotal = this.subtotal;
+      const shipping = this.shipping;
+      const discount = this.discount;
+      const amount = this.total;
+      const orderDetails = {
+        confirmedAt,
+        paymentMethod: this.getPaymentMethodLabel(paymentMethodType),
+        address: confirmationAddress,
+        items,
+        totals: {
+          subtotal,
+          shipping,
+          discount,
+          amount,
+        },
+      };
+
+      sessionStorage.setItem('latestOrderDetails', JSON.stringify(orderDetails));
 
       this.paymentSuccess.set('Payment successful. Your order is confirmed.');
       this.cartService.deleteCart();
       this.router.navigate(['/checkout/success'], {
         state: {
-          confirmedAt: new Date().toISOString(),
-          paymentMethod: this.getPaymentMethodLabel(paymentMethodType),
-          address: confirmationAddress,
-          amount: this.total,
+          ...orderDetails,
+          amount,
         },
       });
     } catch (error: any) {

@@ -1,0 +1,82 @@
+<section class="order-shell">
+  <div class="order-card">
+    <h1>Your order</h1>
+
+    @if (!hasOrder()) {
+      <p class="empty-state">No recent order details were found.</p>
+    } @else {
+      <div class="order-meta">
+        <div class="meta-row">
+          <span class="label">Order date</span>
+          <span class="value">{{ confirmedAt | date: 'medium' }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="label">Payment method</span>
+          <span class="value">{{ paymentMethod }}</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Shipping address</h3>
+        @if (hasAddress()) {
+          <p class="address-text">
+            {{ address?.fullName }}<br>
+            {{ address?.line1 }}<br>
+            @if (address?.line2) {
+              {{ address?.line2 }}<br>
+            }
+            {{ address?.city }}, {{ address?.state }} {{ address?.postalCode }}<br>
+            {{ address?.country }}
+          </p>
+        } @else {
+          <p class="empty-state">Address details are not available.</p>
+        }
+      </div>
+
+      <div class="section">
+        <h3>Items</h3>
+        @if (items.length === 0) {
+          <p class="empty-state">No item details are available.</p>
+        } @else {
+          <div class="items-list">
+            @for (item of items; track item.productId) {
+              <article class="order-item">
+                <img [src]="item.pictureUrl" [alt]="item.productName" class="item-image" />
+                <div class="item-info">
+                  <h4>{{ item.productName }}</h4>
+                  <p>{{ item.brand }} • {{ item.type }}</p>
+                  <p>Qty: {{ item.quantity }}</p>
+                </div>
+                <div class="item-price">{{ item.price * item.quantity | currency }}</div>
+              </article>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="section totals">
+        <h3>Order totals</h3>
+        <div class="meta-row">
+          <span class="label">Subtotal</span>
+          <span class="value">{{ subtotal | currency }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="label">Shipping</span>
+          <span class="value">{{ shipping | currency }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="label">Discount</span>
+          <span class="value">-{{ discount | currency }}</span>
+        </div>
+        <div class="meta-row total-row">
+          <span class="label">Total paid</span>
+          <span class="value">{{ amount | currency }}</span>
+        </div>
+      </div>
+    }
+
+    <div class="actions">
+      <button mat-flat-button color="primary" routerLink="/checkout/success">Return to order</button>
+    </div>
+  </div>
+</section>

@@ -8,6 +8,7 @@ import { ServerErrorComponent } from './shared/components/server-error/server-er
 import { CartComponent } from './features/cart/cart.component';
 import { CheckoutComponent } from './features/checkout/checkout.component';
 import { CheckoutSuccessComponent } from './features/checkout/checkout-success/checkout-success.component';
+import { CheckoutOrderComponent } from './features/checkout/checkout-order/checkout-order.component';
 import { LoginComponent } from './features/account/login/login.component';
 import { RegisterComponent } from './features/account/register/register.component';
 import { authGuard } from './core/guards/auth.guard';
@@ -19,6 +20,7 @@ export const routes: Routes = [
     {path: 'cart', component: CartComponent},
     {path: 'checkout', component: CheckoutComponent, canActivate: [authGuard]},
     {path: 'checkout/success', component: CheckoutSuccessComponent, canActivate: [authGuard]},
+    {path: 'checkout/order', component: CheckoutOrderComponent, canActivate: [authGuard]},
     {path: 'account/login', component: LoginComponent},
     {path: 'account/register', component: RegisterComponent},
     {path: 'test-error', component: TestErrorComponent},
