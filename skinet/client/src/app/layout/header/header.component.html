@@ -41,18 +41,9 @@
         <span class="profile-name">{{ accountService.currentUser()?.firstName }} {{ accountService.currentUser()?.lastName }}</span>
       </button>
       <mat-menu #userMenu="matMenu">
-        <button mat-menu-item routerLink="/account/profile">
-          <mat-icon>person</mat-icon>
-          <span>My Profile</span>
-        </button>
-        <button mat-menu-item routerLink="/account/orders">
-          <mat-icon>receipt</mat-icon>
-          <span>My Orders</span>
-        </button>
-        <mat-divider></mat-divider>
-        <button mat-menu-item (click)="onLogout()">
+        <button mat-menu-item (click)="onLogout()" class="logout-button">
           <mat-icon>logout</mat-icon>
-          <span>Logout</span>
+          <span>Sign Out</span>
         </button>
       </mat-menu>
     }

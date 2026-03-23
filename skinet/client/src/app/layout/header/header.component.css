@@ -113,11 +113,19 @@
   width: 24px;
 }
 
-.profile-name {
-  max-width: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* Logout Button */
+.logout-button {
+  color: #dc3545 !important;
+  font-weight: 500 !important;
+}
+
+.logout-button:hover {
+  background-color: #ffebee !important;
+  color: #b71c1c !important;
+}
+
+.logout-button mat-icon {
+  color: #dc3545 !important;
 }
 
 /* Progress Bar */
