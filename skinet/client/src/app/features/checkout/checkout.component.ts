@@ -7,7 +7,7 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { loadStripe, Stripe, StripeElements, StripePaymentElement } from '@stripe/stripe-js';
+import { loadStripe, Stripe, StripeCardElement, StripeElements } from '@stripe/stripe-js';
 import { AccountService } from '../../core/services/account.service';
 import { CartService } from '../../core/services/cart.service';
 import { CheckoutService } from '../../core/services/checkout.service';
@@ -64,7 +64,7 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private stripe: Stripe | null = null;
   private elements: StripeElements | null = null;
-  private paymentElement: StripePaymentElement | null = null;
+  private cardElement: StripeCardElement | null = null;
   private addressAutocomplete: any = null;
   private isViewReady = false;
 
@@ -150,9 +150,9 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.paymentElement) {
-      this.paymentElement.unmount();
-      this.paymentElement = null;
+    if (this.cardElement) {
+      this.cardElement.unmount();
+      this.cardElement = null;
     }
 
     if (this.addressAutocomplete && window.google?.maps?.event) {
@@ -246,7 +246,7 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
     this.paymentError.set('');
     this.paymentSuccess.set('');
 
-    if (!this.stripe || !this.elements) {
+    if (!this.stripe || !this.cardElement) {
       this.paymentError.set('Stripe is not ready yet. Please wait a moment and try again.');
       return;
     }
@@ -254,27 +254,37 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isPaying.set(true);
 
     try {
-      const result = await this.stripe.confirmPayment({
-        elements: this.elements,
-        redirect: 'if_required',
-        confirmParams: {
-          return_url: window.location.href,
+      const result = await this.stripe.confirmCardPayment(
+        this.cartService.cart()?.clientSecret ?? '',
+        {
+          payment_method: {
+            card: this.cardElement,
+          },
         },
-      });
+        {
+          handleActions: true,
+        }
+      );
 
       if (result.error) {
         this.paymentError.set(result.error.message ?? 'Payment failed. Please try again.');
         return;
       }
 
-      const status = (result as any)?.paymentIntent?.status as string | undefined;
-      if (status && !['succeeded', 'processing', 'requires_capture'].includes(status)) {
+      if (!result.paymentIntent) {
+        this.paymentError.set('Payment could not be completed. Please try again.');
+        return;
+      }
+
+      const status = result.paymentIntent.status;
+      if (!['succeeded', 'processing', 'requires_capture'].includes(status)) {
         this.paymentError.set('Payment was not completed. Please check your details and try again.');
         return;
       }
 
+      const paymentMethodType = result.paymentIntent.payment_method_types?.[0] as string | undefined;
+
       const confirmedAt = new Date().toISOString();
-      const paymentMethodType = (result as any)?.paymentIntent?.payment_method_types?.[0] as string | undefined;
       const confirmationAddress = this.selectedAddress() ?? this.addressForm.getRawValue();
       const items = [...(this.cartService.cart()?.items ?? [])] as CartItem[];
       const subtotal = this.subtotal;
@@ -351,9 +361,9 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    if (this.paymentElement) {
-      this.paymentElement.unmount();
-      this.paymentElement = null;
+    if (this.cardElement) {
+      this.cardElement.unmount();
+      this.cardElement = null;
     }
 
     this.elements = this.stripe.elements({
@@ -366,8 +376,19 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
       },
     });
 
-    this.paymentElement = this.elements.create('payment');
-    this.paymentElement.mount('#payment-element');
+    this.cardElement = this.elements.create('card', {
+      hidePostalCode: true,
+      style: {
+        base: {
+          fontSize: '16px',
+          color: '#1f2937',
+          '::placeholder': {
+            color: '#9ca3af',
+          },
+        },
+      },
+    });
+    this.cardElement.mount('#payment-element');
   }
 
   private async initializeAddressAutocomplete(): Promise<void> {

@@ -50,28 +50,29 @@ public class PaymentService(
         var amount = Convert.ToInt64(decimal.Round(subtotal * 100, 0, MidpointRounding.AwayFromZero));
         var paymentIntentService = new PaymentIntentService();
 
-        if (string.IsNullOrWhiteSpace(cart.PaymentIntentId))
+        // Always recreate the intent as card-only to avoid reusing old intents that may include bank methods.
+        if (!string.IsNullOrWhiteSpace(cart.PaymentIntentId))
         {
-            var createOptions = new PaymentIntentCreateOptions
+            try
             {
-                Amount = amount,
-                Currency = "usd",
-                PaymentMethodTypes = ["card"],
-            };
-
-            var intent = await paymentIntentService.CreateAsync(createOptions);
-            cart.PaymentIntentId = intent.Id;
-            cart.ClientSecret = intent.ClientSecret;
+                await paymentIntentService.CancelAsync(cart.PaymentIntentId);
+            }
+            catch
+            {
+                // Ignore cancellation failures; we'll still replace the intent.
+            }
         }
-        else
+
+        var createOptions = new PaymentIntentCreateOptions
         {
-            var updateOptions = new PaymentIntentUpdateOptions
-            {
-                Amount = amount,
-            };
+            Amount = amount,
+            Currency = "usd",
+            PaymentMethodTypes = ["card"],
+        };
 
-            await paymentIntentService.UpdateAsync(cart.PaymentIntentId, updateOptions);
-        }
+        var intent = await paymentIntentService.CreateAsync(createOptions);
+        cart.PaymentIntentId = intent.Id;
+        cart.ClientSecret = intent.ClientSecret;
 
         return await cartService.SetCartAsync(cart);
     }
