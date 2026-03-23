@@ -20,6 +20,19 @@
                 </div>
             </div>
 
+            @if (currentStep() >= 3) {
+                <div class="persistent-payment-slot" [class.hidden-slot]="currentStep() !== 3">
+                    @if (isPreparingPayment()) {
+                        <div class="centered">
+                            <mat-spinner diameter="28"></mat-spinner>
+                            <span>Preparing secure payment form...</span>
+                        </div>
+                    } @else {
+                        <div id="payment-element" class="payment-element"></div>
+                    }
+                </div>
+            }
+
             @if (currentStep() === 1) {
                 <form class="panel" [formGroup]="addressForm" (ngSubmit)="continueFromAddress()">
                     <mat-form-field appearance="outline" class="full">
@@ -112,15 +125,6 @@
                 <div class="panel payment-panel">
                     <h3>Payment details</h3>
                     <p class="muted">Use test card 4242 4242 4242 4242, any future date, any CVC.</p>
-
-                    @if (isPreparingPayment()) {
-                        <div class="centered">
-                            <mat-spinner diameter="28"></mat-spinner>
-                            <span>Preparing secure payment form...</span>
-                        </div>
-                    } @else {
-                        <div id="payment-element" class="payment-element"></div>
-                    }
 
                     @if (paymentError()) {
                         <p class="error-text">{{ paymentError() }}</p>

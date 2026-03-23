@@ -7,7 +7,7 @@ import { NotFoundComponent } from './shared/components/not-found/not-found.compo
 import { ServerErrorComponent } from './shared/components/server-error/server-error.component';
 import { CartComponent } from './features/cart/cart.component';
 import { CheckoutComponent } from './features/checkout/checkout.component';
-import { L } from '@angular/cdk/keycodes';
+import { CheckoutSuccessComponent } from './features/checkout/checkout-success/checkout-success.component';
 import { LoginComponent } from './features/account/login/login.component';
 import { RegisterComponent } from './features/account/register/register.component';
 import { authGuard } from './core/guards/auth.guard';
@@ -18,6 +18,7 @@ export const routes: Routes = [
     {path: 'shop/:id', component: ProductDetailsComponent},
     {path: 'cart', component: CartComponent},
     {path: 'checkout', component: CheckoutComponent, canActivate: [authGuard]},
+    {path: 'checkout/success', component: CheckoutSuccessComponent, canActivate: [authGuard]},
     {path: 'account/login', component: LoginComponent},
     {path: 'account/register', component: RegisterComponent},
     {path: 'test-error', component: TestErrorComponent},

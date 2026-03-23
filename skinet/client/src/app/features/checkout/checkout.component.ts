@@ -6,8 +6,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { loadStripe, Stripe, StripeElements, StripePaymentElement } from '@stripe/stripe-js';
 import { AccountService } from '../../core/services/account.service';
 import { CartService } from '../../core/services/cart.service';
@@ -26,7 +25,6 @@ declare global {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     CurrencyPipe,
     MatButton,
     MatCheckbox,
@@ -34,8 +32,6 @@ declare global {
     MatLabel,
     MatInput,
     MatProgressSpinner,
-    MatRadioGroup,
-    MatRadioButton,
   ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss',
@@ -256,23 +252,44 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.isPaying.set(true);
 
-    const result = await this.stripe.confirmPayment({
-      elements: this.elements,
-      redirect: 'if_required',
-      confirmParams: {
-        return_url: window.location.href,
-      },
-    });
+    try {
+      const result = await this.stripe.confirmPayment({
+        elements: this.elements,
+        redirect: 'if_required',
+        confirmParams: {
+          return_url: window.location.href,
+        },
+      });
 
-    this.isPaying.set(false);
+      if (result.error) {
+        this.paymentError.set(result.error.message ?? 'Payment failed. Please try again.');
+        return;
+      }
 
-    if (result.error) {
-      this.paymentError.set(result.error.message ?? 'Payment failed. Please try again.');
-      return;
+      const status = (result as any)?.paymentIntent?.status as string | undefined;
+      if (status && !['succeeded', 'processing', 'requires_capture'].includes(status)) {
+        this.paymentError.set('Payment was not completed. Please check your details and try again.');
+        return;
+      }
+
+      const paymentMethodType = (result as any)?.paymentIntent?.payment_method_types?.[0] as string | undefined;
+      const confirmationAddress = this.selectedAddress() ?? this.addressForm.getRawValue();
+
+      this.paymentSuccess.set('Payment successful. Your order is confirmed.');
+      this.cartService.deleteCart();
+      this.router.navigate(['/checkout/success'], {
+        state: {
+          confirmedAt: new Date().toISOString(),
+          paymentMethod: this.getPaymentMethodLabel(paymentMethodType),
+          address: confirmationAddress,
+          amount: this.total,
+        },
+      });
+    } catch (error: any) {
+      this.paymentError.set(error?.message ?? 'Unable to complete payment. Please try again.');
+    } finally {
+      this.isPaying.set(false);
     }
-
-    this.paymentSuccess.set('Payment successful. Your order is confirmed.');
-    this.cartService.deleteCart();
   }
 
   backToShop(): void {
@@ -296,7 +313,7 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private async mountPaymentElement(): Promise<void> {
-    if (!this.isViewReady || this.currentStep() !== 3) return;
+    if (!this.isViewReady || this.currentStep() < 3) return;
     if (!this.hasClientSecret) return;
     if (!environment.stripePublishableKey || environment.stripePublishableKey.includes('replace_with')) {
       this.paymentError.set('Stripe publishable key is not configured.');
@@ -412,6 +429,17 @@ export class CheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     return CheckoutComponent.googleMapsScriptPromise;
+  }
+
+  private getPaymentMethodLabel(methodType?: string): string {
+    if (!methodType) return 'Card';
+
+    if (methodType === 'us_bank_account') return 'US bank account';
+
+    return methodType
+      .split('_')
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
   }
 
 }

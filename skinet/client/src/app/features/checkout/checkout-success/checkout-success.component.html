@@ -1,0 +1,48 @@
+<section class="success-shell">
+  <div class="success-card">
+    <div class="status-icon" aria-hidden="true">✓</div>
+    <h1>Payment successful</h1>
+    <p class="message">
+      Your order has been confirmed. Thank you for shopping with us.
+    </p>
+
+    <div class="confirmation-details">
+      <div class="detail-row">
+        <span class="label">Confirmation date</span>
+        <span class="value">{{ confirmedAt | date: 'medium' }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="label">Payment method</span>
+        <span class="value">{{ paymentMethod }}</span>
+      </div>
+
+      <div class="detail-row address-row">
+        <span class="label">Address</span>
+        <span class="value">
+          @if (hasAddress()) {
+            {{ address?.fullName }}<br>
+            {{ address?.line1 }}<br>
+            @if (address?.line2) {
+              {{ address?.line2 }}<br>
+            }
+            {{ address?.city }}, {{ address?.state }} {{ address?.postalCode }}<br>
+            {{ address?.country }}
+          } @else {
+            Not available
+          }
+        </span>
+      </div>
+
+      <div class="detail-row amount-row">
+        <span class="label">Amount paid</span>
+        <span class="value">{{ amount | currency }}</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button mat-flat-button color="primary" routerLink="/shop">Continue shopping</button>
+      <button mat-stroked-button color="primary" routerLink="/cart">View cart</button>
+    </div>
+  </div>
+</section>
